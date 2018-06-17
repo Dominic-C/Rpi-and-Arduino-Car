@@ -5,20 +5,21 @@ Servo top;
 
 int i = 0;
 char receivedchar;
-int basepos = 90;
-int toppos = 90;
+int basedeg = 90;
+int* basepos = &basedeg;
+int topdeg = 90;
+int* toppos = &topdeg;
 
 int STBY = A4;
 int AIN1 = 7;
 int AIN2 = 8;
 int BIN1 = 9;
-int BIN2 = 10;
+int BIN2 = 4;
 int PWMA = 11;
 int PWMB = 3;
 int PWMSPD = 80;
 
 void setup() {
-  // put your setup code here, to run once:
   pinMode(AIN1, OUTPUT);
   pinMode(AIN2, OUTPUT);
   pinMode(BIN1, OUTPUT);
@@ -30,9 +31,9 @@ void setup() {
   digitalWrite(PWMB, LOW);
 
   base.attach(6);
-  top.attach(5);
-  base.write(basepos);
-  top.write(toppos);
+  top.attach(10);
+  base.write(basedeg);
+  top.write(topdeg);
   Serial.begin(9600);
 
 }
@@ -40,7 +41,6 @@ void setup() {
 void forward()
 {
   digitalWrite(STBY, HIGH);
-  // control speed between 0 and 255
   analogWrite(PWMA, PWMSPD);
   analogWrite(PWMB, PWMSPD);
   
@@ -54,9 +54,6 @@ void forward()
 void reverse()
 {
   digitalWrite(STBY, HIGH);
-  //digitalWrite(PWMA, HIGH);
-  //digitalWrite(PWMB, HIGH);
-  // control speed between 0 and 255
   analogWrite(PWMA, PWMSPD);
   analogWrite(PWMB, PWMSPD);
   
@@ -70,9 +67,6 @@ void reverse()
 void brake()
 {
   digitalWrite(STBY, HIGH);
-  //digitalWrite(PWMA, HIGH);
-  //digitalWrite(PWMB, HIGH);
-  // control speed between 0 and 255
   analogWrite(PWMA, PWMSPD);
   analogWrite(PWMB, PWMSPD);
   
@@ -86,9 +80,6 @@ void brake()
 void left()
 {
   digitalWrite(STBY, HIGH);
-  //digitalWrite(PWMA, HIGH);
-  //digitalWrite(PWMB, HIGH);
-  // control speed between 0 and 255
   analogWrite(PWMA, PWMSPD);
   analogWrite(PWMB, PWMSPD);
   
@@ -102,9 +93,6 @@ void left()
 void right()
 {
   digitalWrite(STBY, HIGH);
-  //digitalWrite(PWMA, HIGH);
-  //digitalWrite(PWMB, HIGH);
-  // control speed between 0 and 255
   analogWrite(PWMA, PWMSPD);
   analogWrite(PWMB, PWMSPD);
   
@@ -122,33 +110,31 @@ void receiver(){
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   receiver();
 
+  // for wheel movement
     if(receivedchar == 'w'){
     forward();
-    Serial.println("moving forward");
   }
   else if (receivedchar == 's'){
     brake();
-    Serial.println("braking");
   }
     else if (receivedchar == 'd'){
     left();
-    Serial.println("turning left");
   }
     else if (receivedchar == 'a'){
     right();
-    Serial.println("turning right");
   }
     else if (receivedchar == 'x'){
     reverse();
-    Serial.println("reversing");
   }
-    if (receivedchar == 'i'){
-    while(toppos < 180){
-      toppos ++;
-      top.write(toppos);
+
+
+  // for servo controlled camera
+  if (receivedchar == ','){
+    while(*toppos < 180){
+      *toppos += 1;
+      top.write(*toppos);
       delay(10);
       receiver();
       if(receivedchar == 'k'){
@@ -157,21 +143,10 @@ void loop() {
     }
   }
 
-    if (receivedchar == ','){
-    while(toppos >= 10){
-      toppos --;
-      top.write(toppos);
-      delay(10);
-      receiver();
-      if(receivedchar == 'k'){
-        break;
-      }
-    }
-  }
-  if (receivedchar == 'j'){
-    while(basepos < 180){
-      basepos ++;
-      base.write(basepos);
+    if (receivedchar == 'i'){
+    while(*toppos >= 10){
+      *toppos -= 1;
+      top.write(*toppos);
       delay(10);
       receiver();
       if(receivedchar == 'k'){
@@ -181,9 +156,9 @@ void loop() {
   }
 
     if (receivedchar == 'l'){
-    while(basepos >= 10){
-      basepos --;
-      base.write(basepos);
+    while(*basepos >= 10){
+      *basepos -= 1;
+      base.write(*basepos);
       delay(10);
       receiver();
       if(receivedchar == 'k'){
@@ -191,9 +166,23 @@ void loop() {
       }
     }
   }
+  if (receivedchar == 'j'){
+    while(*basepos < 180){
+      *basepos += 1;
+      base.write(*basepos);
+      delay(10);
+      receiver();
+      if(receivedchar == 'k'){
+        break;
+      }
+    }
+  }
+
     if (receivedchar == 'o'){
       top.write(90);
       base.write(90);
+      *basepos = 90;
+      *toppos = 90;
   }
   
 }
