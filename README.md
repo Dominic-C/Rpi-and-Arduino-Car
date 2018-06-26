@@ -1,12 +1,15 @@
-# Rpi-and-Arduino-Car
-Source code for controlling an Arduino via serial ports using a Raspberry Pi. Implemented on a small car
+# RaspberryPi controlled Arduino car
 
-Instructions:
+## Requirements
+* pyserial
+* arduino IDE
 
-1.1 run ls /dev/tty* to list out existing serial devices connected to the Raspberry Pi
-1.2 Connect arduino to Raspberry Pi via USB and run ls /dev/tty* again to find the serial port of the arduino
-2. Upload code into arduino
-3. Run python script on raspberry pi*
+## Instructions
+1. Wire up the arduino to the motor as indicated in the code. Do note that you have to connect the motors through a motor driver. In my case, i used a TB6612FNG motor driver.
+2. upload code and run `python Rpi_car.py`.
+3. After initialization, click on the square box created by tkinter.
+4. Move around with w, a, s, d
+5. additionally, you could mount servos and a camera and control it in 2 axis with i, j, k, l
 
-
-Note: if your arduino is not named /dev/ttyUSB0, edit the python script to reflect your arduino's serial port name.
+## Other resources
+if you would like to attach an Rpi camera and stream over wifi, heres a link you can check out: http://picamera.readthedocs.io/en/latest/recipes2.html#web-streaming
