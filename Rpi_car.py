@@ -3,15 +3,17 @@ import time
 import sys
 import Tkinter as tk
 
-arduino = serial.Serial("/dev/ttyUSB0", 9600)
+arduino = serial.Serial("/dev/ttyUSB0", 9600) # connecting to arduino with baud rate 9600
 time.sleep(1)
 
 print "Initialze complete.. \n"
 
 def key_input(event):
-    print 'key:', event.char
+    print 'key:', event.char # printing key input just to check if keystroke is registered
     key_press = event.char
 
+    # using keypress events to trigger the arduino's functions
+    # each letter sent to the arduino corresponds to either movement of the motors or movement of the servos
     if key_press.lower() == 'w':
         arduino.write('w')
     elif key_press.lower() == 's':
@@ -39,7 +41,7 @@ def key_input(event):
 
     time.sleep(0.03)
 
-def brake(event):
+def brake(event): # making a brake function to stop movement upon key release
     # so that car stops when we stop pressing w, a, s, d 
     arduino.write('s')
     # so that servo stops when we release the keys
@@ -47,6 +49,6 @@ def brake(event):
 
 command = tk.Tk()
 command.bind('<KeyPress>', key_input)
-command.bind('<KeyRelease>', brake)
+command.bind('<KeyRelease>', brake) # Key release triggers the brake function
 command.mainloop()
 
